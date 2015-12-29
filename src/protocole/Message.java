@@ -18,6 +18,30 @@ public class Message {
 		this.message = message;
 		this.color = c;
 	}
+	
+	public Message(String message) {
+		String[] parts = message.split(";");
+		if(parts.length > 4) {
+			this.expediteur = parts[1];
+			this.destinataire = parts[2];
+			String[] rgb = parts[3].split("_");
+			if(rgb.length == 3) {	 
+				this.color = new Color(Integer.parseInt(rgb[0]),Integer.parseInt(rgb[1]),Integer.parseInt(rgb[2]));
+			} else {
+				this.color = Color.BLACK;
+			}
+			this.date = new Date().toString();
+			for(int i=4;i<parts.length;i++) {
+				this.message += parts[i];
+			}
+		} else {
+			this.expediteur = "stranger";
+			this.destinataire = "all";
+			this.date = new Date().toString();
+			this.message = "";
+			this.color = Color.BLACK;
+		}
+	}
 
 	public String GetExpediteur() {
 		return expediteur;
@@ -53,5 +77,9 @@ public class Message {
 	
 	public void SetColor(Color c) {
 		this.color = c;
+	}
+
+	public String toString() {
+		return "Message;" + expediteur + ";" + destinataire + ";" + color.getRed() + "_" + color.getGreen() + "_" + color.getBlue() + ";" + message;
 	}
 }

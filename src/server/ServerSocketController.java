@@ -1,13 +1,18 @@
 package server;
 
+import java.awt.Color;
 import java.net.ServerSocket;
+import java.util.LinkedList;
+import protocole.Message;
 
 public class ServerSocketController {
-	 	private ServerSocket serverSocket; 
+	 	public ServerSocket serverSocket; 
 	    private ServerCreatView scv;
 	    private ServerView sv;
 	    private ServerSocketThread thread;
-	    
+	    private LinkedList<ClientInformation> clients = new LinkedList<ClientInformation>();
+		private LinkedList<Message> messages = new LinkedList<Message>();
+		
 	public void start() {
     	scv = new ServerCreatView(this);
     }
@@ -16,7 +21,9 @@ public class ServerSocketController {
         try {
         	serverSocket = new ServerSocket(port);
             scv.Exit();
-            
+            thread = new ServerSocketThread(this);
+            thread.run();
+            sv = new ServerView();
         } catch (Exception e) {
         	scv.ErrorPort();
             System.err.println("Server exception: " + e.toString());
@@ -24,7 +31,78 @@ public class ServerSocketController {
         }       
     }
     
-    public void run() {
-    	
+    public void Register(String c, ClientThread socket) {
+    	if(NameExist(c)) {
+    		socket.AlreadyUse();
+    	} else {
+    		String[] parts = c.split(";");
+    		ClientInformation client =  new ClientInformation(parts[1], parts[2], socket);
+	    	System.out.println("Le client <" + parts[1] + "> est connecté");
+	    	clients.add(client);
+	    	for(int i=0;i<messages.size();i++) {
+	    		socket.Send(messages.get(i));
+	    	}
+	    	String[] rgb = parts[2].split(";");
+	    	Color color = Color.BLACK;
+	    	if(rgb.length == 3) {
+	    		color = new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+	    	}
+	    	Message m = new Message(c, "all", c + " est connecté", color);
+	    	messages.add(m);
+	    	for(int i=0;i<clients.size();i++) {
+	    		clients.get(i).GetSocket().Send(m);
+	    		if(clients.get(i).GetNom().equals(parts[1]) == false) {
+	    			clients.get(i).GetSocket().AddClient(parts[1]);
+	    		}
+	    	}
+	    	for(int i=0;i<clients.size();i++) {
+	    		socket.AddClient(clients.get(i).GetNom());
+	    	}
+    	}
+    }
+    
+    public void Disconnection(String c, ClientThread socket) {
+    	ClientInformation client = SearchClient(c);
+    	if(c != null) {
+	    	String[] rgb = client.GetColor().split(";");
+	    	Color color = Color.BLACK;
+	    	if(rgb.length == 3) {
+	    		color = new Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+	    	}
+	    	Message m = new Message(c, "all", c + " est déconnecté", color);
+	    	messages.add(m);
+	    	for(int i=0;i<clients.size();i++) {
+	    		clients.get(i).GetSocket().Send(m);
+	    		clients.get(i).GetSocket().DeleteClient(c);;
+	    	}
+	    	clients.remove(client);
+	    	socket.interrupt();
+    	}
+    }
+    
+    public void Send(Message message) {	
+    	messages.add(message);
+    	for(int i=0;i<clients.size();i++) {
+    		clients.get(i).GetSocket().Send(message);
+    	}
+    }
+
+    private boolean NameExist(String name) {
+    	for(int i=0;i<clients.size();i++) {
+	    	if(clients.get(i).equals(name)) {
+	    		return true;
+	   		}
+    	}
+    	return false;
+    }
+    
+    private ClientInformation SearchClient(String name) {
+    	for(int i=0;i<clients.size();i++) {
+    		if(clients.get(i).equals(name)) {
+	    			return clients.get(i);
+	    	}
+    	}
+    	return null;
     }
 }
+

@@ -1,6 +1,5 @@
 package server;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -68,7 +67,6 @@ public class ServerCreatView extends JFrame implements ActionListener {
 		if(e.getSource() == jButton1) {
 			try {
 	            servercont.InitServeur(Integer.parseInt(jTextField1.getText()));
-	            servercont.run();
 	        }
 	        catch(NumberFormatException nfe)
 	        {
