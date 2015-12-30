@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 
 import protocole.Message;
+import protocole.Protocole;
 
 public class ClientSocketController extends Thread {
 	private Client c;
@@ -28,13 +29,17 @@ public class ClientSocketController extends Thread {
 			Socket echoSocket = new Socket(c.GetHost(),Integer.parseInt(c.GetPort()));
 			BufferedReader socIn = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));    
 			PrintStream socOut= new PrintStream(echoSocket.getOutputStream());
-			socOut.println("CONNECT;"+c.GetName());
+			socOut.println("CONNECT;"+c.GetName()+";"+c.GetColor().getRed()+"_"+c.GetColor().getGreen()+"_"+c.GetColor().getBlue());
 			String line = socIn.readLine();
-			if(line.equals("ok")){
-				thread = new CommunicationThread(this, echoSocket, socOut, socIn);
-				thread.run();
+			Protocole p = new Protocole(line);
+			if(p.GetType() == 4){
 				view = new ClientView(this);
 				connectionView.Exit();
+				connectionView=null;
+				view.Affiche();
+				System.gc();
+				thread = new CommunicationThread(this, echoSocket, socOut, socIn);
+				thread.start();
 			} else {
 				connectionView.ErrorName();
 			}
@@ -45,9 +50,9 @@ public class ClientSocketController extends Thread {
 	}
 
 	public void Disconnection() {
-		view.Exit();
 		thread.Disconnection();
-		thread.interrupt();
+		view.Exit();
+		System.exit(0);
 	}
 	
 	public void Receive(Message m) {	

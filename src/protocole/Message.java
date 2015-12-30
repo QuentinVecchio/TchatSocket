@@ -8,7 +8,7 @@ public class Message {
 	private String expediteur;
 	private String destinataire;
 	private String date;
-	private String message;
+	private String message = "";
 	private Color color;
 	
 	public Message(String expediteur, String destinataire, String message, Color c) {
@@ -80,6 +80,6 @@ public class Message {
 	}
 
 	public String toString() {
-		return "Message;" + expediteur + ";" + destinataire + ";" + color.getRed() + "_" + color.getGreen() + "_" + color.getBlue() + ";" + message;
+		return "MESSAGE;" + expediteur + ";" + destinataire + ";" + color.getRed() + "_" + color.getGreen() + "_" + color.getBlue() + ";" + message;
 	}
 }

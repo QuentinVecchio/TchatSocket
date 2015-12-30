@@ -22,9 +22,11 @@ public class CommunicationThread extends Thread {
 	}
 	
 	public void Disconnection() {
-		socOut.println("QUIT;" + controller.GetName());
+		socOut.println("QUIT;" + controller.GetName() + ";" + controller.GetColor().getRed()+"_"+controller.GetColor().getGreen()+"_"+controller.GetColor().getBlue());
 		try {
 			echoSocket.close();
+			socIn.close();
+			socOut.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -42,10 +44,10 @@ public class CommunicationThread extends Thread {
 				if(p.GetType() == 0) {
 					String[] parts = line.split(";");
 					controller.AddClient(parts[1]);
-				} else if(p.GetType() == 1) {
+				} else if(p.GetType() == 2) {
 					Message m = new Message(line);
 					controller.Receive(m);
-				} else if (p.GetType() == 2) {
+				} else if (p.GetType() == 1) {
 					String[] parts = line.split(";");
 					controller.DeleteClient(parts[1]);
 				}

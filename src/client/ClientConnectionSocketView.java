@@ -1,11 +1,14 @@
 package client;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -116,6 +119,15 @@ public class ClientConnectionSocketView extends JFrame implements ActionListener
 			c.SetName(pseudoTextField.getText());
 			c.SetPort(portTextField.getText());
 			c.Connection();		
+		} else if(e.getSource() == colorButton){
+			try {
+				Color color = JColorChooser.showDialog(null, "Choisir une couleur", c.GetColor());
+				c.SetColor(color);
+				colorLabel.setForeground(color);
+			} catch (HeadlessException e1) {
+				System.out.println("Erreur color");
+				e1.printStackTrace();
+			}
 		}
 	}
 }

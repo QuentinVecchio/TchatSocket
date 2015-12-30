@@ -6,6 +6,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -17,11 +20,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import protocole.Message;
 
-public class ClientView extends JFrame implements ActionListener {
+public class ClientView extends JFrame implements ActionListener,WindowListener {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel pseudoLabel = new JLabel("Pseudo : ");
@@ -38,6 +42,7 @@ public class ClientView extends JFrame implements ActionListener {
 	private DefaultListModel<String> listClients;
 	private ClientSocketController c;
 	private String allMessage = "";
+	private JScrollPane scroll;
 	
 	public ClientView(ClientSocketController c) {
 		this.c = c;
@@ -51,6 +56,7 @@ public class ClientView extends JFrame implements ActionListener {
 		BuildGUINorth();
 		BuildGUISouth();
 		BuildGUICenter();
+		addWindowListener(this);
 	}
   
 	public void Affiche() {
@@ -66,7 +72,12 @@ public class ClientView extends JFrame implements ActionListener {
 		if(e.getSource() == deconnectionButton) {
 			c.Disconnection();		
 		} else if (e.getSource() == sendButton) {
-			Message m = new Message(c.GetName(), "all", messageTextField.getText(),c.GetColor());
+			String s = "all";
+			if(clientsList.isSelectionEmpty() == false) {
+				s = (String) clientsList.getSelectedValue();
+				clientsList.clearSelection();
+			}
+			Message m = new Message(c.GetName(), s, messageTextField.getText(),c.GetColor());
 			c.Send(m);
 			messageTextField.setText("");
 			messageTextField.requestFocus();
@@ -82,8 +93,9 @@ public class ClientView extends JFrame implements ActionListener {
 	}
 	
 	public void AddMessage(Message m) {
-		allMessage += "<span style=\"color : rgb(" + m.GetColor().getRed() + "," + m.GetColor().getGreen() + "," + m.GetColor().getBlue() + ")\">" + m.GetExpediteur() + " > " + m.GetDestinataire() + " : " + m.GetMessage() + "</<span></br>";
-		messagesArea.setText(allMessage);
+		allMessage += "<span style=\"color : rgb(" + m.GetColor().getRed() + "," + m.GetColor().getGreen() + "," + m.GetColor().getBlue() + ")\">" + m.GetExpediteur() + " > " + m.GetDestinataire() + " : " + m.GetMessage() + "</span><br>";
+		this.messagesArea.setText(allMessage);
+		messagesArea.setCaretPosition(messagesArea.getDocument().getLength());
 	}
 	
 	private void BuildGUILeft() {
@@ -96,7 +108,7 @@ public class ClientView extends JFrame implements ActionListener {
 		JScrollPane listScroller = new JScrollPane(clientsList);
 		listScroller.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
 		panelLeft.add(listScroller);
-		clientsList.setPreferredSize(new Dimension(170,450));
+		listScroller.setPreferredSize(new Dimension(170,500));
 		this.add(panelLeft, BorderLayout.WEST);
 	}
 	
@@ -163,8 +175,38 @@ public class ClientView extends JFrame implements ActionListener {
 	    messagesArea.setDocument(doc);
 	    this.add(panelCenter, BorderLayout.CENTER);
 	    messagesArea.setPreferredSize(new Dimension(570,500));
-		JScrollPane scroll = new JScrollPane( messagesArea );
+		scroll = new JScrollPane( messagesArea );
 	    scroll.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
 	    panelCenter.add(scroll);
+	    DefaultCaret caret = (DefaultCaret)messagesArea.getCaret();
+	    caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+	}
+
+	public void windowClosing(WindowEvent e) {
+		c.Disconnection();
+	}
+
+	public void windowClosed(WindowEvent e) {
+		c.Disconnection();		
+	}
+
+	public void windowOpened(WindowEvent e) {
+		
+	}
+
+	public void windowIconified(WindowEvent e) {
+		
+	}
+
+	public void windowDeiconified(WindowEvent e) {
+		
+	}
+
+	public void windowActivated(WindowEvent e) {
+		
+	}
+
+	public void windowDeactivated(WindowEvent e) {
+		
 	}
 }

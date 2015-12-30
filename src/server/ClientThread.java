@@ -30,15 +30,18 @@ public class ClientThread extends Thread {
   		while (true) {
   			try {
   				String line = socIn.readLine();
-  				Protocole p = new Protocole(line);
-  				if(p.GetType() == 0) {
-  					controller.Register(line, this);
-  				} else if(p.GetType() == 1) {
-  					controller.Disconnection(line, this);
-  					clientSocket.close();
-  				} else if(p.GetType() == 2) {
-  					Message m = new Message(line);
-  	  				controller.Send(m);
+  				if(line != null) {
+	  				Protocole p = new Protocole(line);
+	  				if(p.GetType() == 0) {
+	  					controller.Register(line, this);
+	  				} else if(p.GetType() == 1) {
+	  					String[] parts = line.split(";");
+	  					controller.Disconnection(parts[1], this);
+	  					clientSocket.close();
+	  				} else if(p.GetType() == 2) {
+	  					Message m = new Message(line);
+	  	  				controller.Send(m);
+	  				}
   				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -46,11 +49,32 @@ public class ClientThread extends Thread {
   		}
   	}
 	
+	public void SendString(String s) {
+		socOut.println(s);
+	}
+	
 	public void AlreadyUse() {
 		socOut.println("FALSE");
 	}
 	
+	public void Disconnection() {
+		try {
+			socIn.close();
+			socOut.close();
+			clientSocket.close();
+			this.interrupt();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
+	public void ConnectionAuthorized() {
+		socOut.println("TRUE");
+	}
+	
 	public void Send(Message m) {
+		System.out.println(m.toString());
 		socOut.println(m.toString());
 	}
 	
