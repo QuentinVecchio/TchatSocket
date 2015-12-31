@@ -37,7 +37,9 @@ public class ClientThread extends Thread {
 	  				} else if(p.GetType() == 1) {
 	  					String[] parts = line.split(";");
 	  					controller.Disconnection(parts[1], this);
+	  					this.Disconnection();
 	  					clientSocket.close();
+	  					break;
 	  				} else if(p.GetType() == 2) {
 	  					Message m = new Message(line);
 	  	  				controller.Send(m);
@@ -74,7 +76,6 @@ public class ClientThread extends Thread {
 	}
 	
 	public void Send(Message m) {
-		System.out.println(m.toString());
 		socOut.println(m.toString());
 	}
 	

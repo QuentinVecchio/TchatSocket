@@ -8,7 +8,7 @@ public class Protocole {
 			String[] parts = p.split(";");
 			if(parts[0].equals("CONNECT") && (parts.length == 3 || parts.length == 2)){
 				type = 0;
-			} else if(parts[0].equals("QUIT") && parts.length == 3){
+			} else if(parts[0].equals("QUIT") && (parts.length == 3 || parts.length == 2)){
 				type = 1;
 			} else if(parts[0].equals("MESSAGE")){
 				type = 2;

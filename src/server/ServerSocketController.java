@@ -36,7 +36,6 @@ public class ServerSocketController {
     	String[] parts = c.split(";");
     	if(NameExist(parts[1])) {
     		socket.AlreadyUse();
-    		System.out.println("ok");
     	} else {
     		socket.ConnectionAuthorized();
     		ClientInformation client =  new ClientInformation(parts[1], parts[2], socket);
@@ -76,10 +75,10 @@ public class ServerSocketController {
 	    	Message m = new Message(client.GetNom(), "all", client.GetNom() + " est déconnecté", color);
 	    	messages.add(m);
 	    	for(int i=0;i<clients.size();i++) {
+	    		System.out.println(m.toString());
 	    		clients.get(i).GetSocket().Send(m);
 	    		clients.get(i).GetSocket().DeleteClient(c);;
 	    	}
-	    	socket.Disconnection();
 	    	socket.interrupt();
     	}
     }
@@ -102,7 +101,7 @@ public class ServerSocketController {
     
     private ClientInformation SearchClient(String name) {
     	for(int i=0;i<clients.size();i++) {
-    		if(clients.get(i).equals(name)) {
+    		if(clients.get(i).GetNom().equals(name)) {
 	    			return clients.get(i);
 	    	}
     	}

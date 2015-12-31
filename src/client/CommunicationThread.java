@@ -41,6 +41,7 @@ public class CommunicationThread extends Thread {
         	try {
 				String line = socIn.readLine();
 				Protocole p = new Protocole(line);
+				System.out.println(line);
 				if(p.GetType() == 0) {
 					String[] parts = line.split(";");
 					controller.AddClient(parts[1]);
@@ -52,8 +53,9 @@ public class CommunicationThread extends Thread {
 					controller.DeleteClient(parts[1]);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				break;
 			}
         }
+		System.exit(0);
 	}
 }

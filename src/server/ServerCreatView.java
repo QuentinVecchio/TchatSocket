@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-//import oracle.jdeveloper.layout.VerticalFlowLayout;
 
 public class ServerCreatView extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
