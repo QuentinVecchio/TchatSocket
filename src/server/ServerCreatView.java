@@ -1,5 +1,6 @@
 package server;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -12,10 +13,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+//import oracle.jdeveloper.layout.VerticalFlowLayout;
 
 public class ServerCreatView extends JFrame implements ActionListener {
-	private static final long serialVersionUID = 1L;
-	private ServerSocketController servercont;
+    private ServerSocketController servercont;
     private JLabel jLabel1 = new JLabel();
     private JTextField jTextField1 = new JTextField();
     private JButton jButton1 = new JButton();
@@ -31,7 +32,7 @@ public class ServerCreatView extends JFrame implements ActionListener {
 
     private void jbInit() throws Exception {
     	this.setSize(400, 100);
-        this.setVisible(true);
+        this.setVisible(false);
         this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(false);
@@ -66,6 +67,7 @@ public class ServerCreatView extends JFrame implements ActionListener {
 		if(e.getSource() == jButton1) {
 			try {
 	            servercont.InitServeur(Integer.parseInt(jTextField1.getText()));
+	            servercont.run();
 	        }
 	        catch(NumberFormatException nfe)
 	        {

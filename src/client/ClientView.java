@@ -35,11 +35,11 @@ public class ClientView extends JFrame implements ActionListener,WindowListener 
 	private JLabel hostLabel2 = new JLabel("");
 	private JLabel portLabel2 = new JLabel("");
 	private JButton deconnectionButton = new JButton();
-	private JList<String> clientsList;
+	private JList clientsList;
 	private JEditorPane messagesArea = new JEditorPane();
 	private JButton sendButton = new JButton("");
 	private JTextField messageTextField = new JTextField("");
-	private DefaultListModel<String> listClients;
+	private DefaultListModel listClients;
 	private ClientSocketController c;
 	private String allMessage = "";
 	private JScrollPane scroll;
@@ -100,8 +100,8 @@ public class ClientView extends JFrame implements ActionListener,WindowListener 
 	
 	private void BuildGUILeft() {
 		JPanel panelLeft = new JPanel();
-		listClients = new DefaultListModel<String>();
-		clientsList = new JList<String>(listClients);
+		listClients = new DefaultListModel();
+		clientsList = new JList(listClients);
 		clientsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		clientsList.setLayoutOrientation(JList.VERTICAL);
 		clientsList.setVisibleRowCount(-1);

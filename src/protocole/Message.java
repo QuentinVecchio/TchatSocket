@@ -1,9 +1,12 @@
 package protocole;
 
 import java.awt.Color;
+
+import java.io.Serializable;
+
 import java.util.Date;
 
-public class Message {
+public class Message implements Serializable {
 
 	private String expediteur;
 	private String destinataire;
@@ -78,7 +81,10 @@ public class Message {
 	public void SetColor(Color c) {
 		this.color = c;
 	}
-
+    
+    public String toAffiche(){
+        return expediteur+" > "+destinataire+": "+message;
+    }
 	public String toString() {
 		return "MESSAGE;" + expediteur + ";" + destinataire + ";" + color.getRed() + "_" + color.getGreen() + "_" + color.getBlue() + ";" + message;
 	}

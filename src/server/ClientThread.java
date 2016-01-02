@@ -36,7 +36,7 @@ public class ClientThread extends Thread {
 	  					controller.Register(line, this);
 	  				} else if(p.GetType() == 1) {
 	  					String[] parts = line.split(";");
-	  					controller.Disconnection(parts[1], this);
+	  					controller.Disconnection(parts[1]);
 	  					this.Disconnection();
 	  					clientSocket.close();
 	  					break;
