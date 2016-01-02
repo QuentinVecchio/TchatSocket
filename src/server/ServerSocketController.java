@@ -19,9 +19,9 @@ public class ServerSocketController {
 	    private ServerCreatView scv;
 	    private ServerView sv;
 	    private ServerSocketThread thread;
-	    private Vector<ClientInformation> clients = new Vector<ClientInformation>();
-            private Vector<Message> messages = new Vector<Message>();
-            private Vector<String> PsudoForbiden = new Vector<String>();
+	    private LinkedList<ClientInformation> clients = new LinkedList<ClientInformation>();
+            private LinkedList<Message> messages = new LinkedList<Message>();
+            private LinkedList<String> PsudoForbiden = new LinkedList<String>();
 		
 	public void start() {
     	scv = new ServerCreatView(this);
@@ -148,9 +148,9 @@ public class ServerSocketController {
         return false;
     }
     private ClientInformation SearchClient(String name) {
-    	for(int i=0;i<clients.size();i++) {
-    		if(clients.get(i).GetNom().equals(name)) {
-	    			return clients.get(i);
+        for(ClientInformation c : clients) {
+    		if(c.GetNom().equals(name)) {
+	    			return c;
 	    	}
     	}
     	return null;
@@ -192,11 +192,11 @@ public class ServerSocketController {
             ois = new ObjectInputStream(fichier);
             Integer sizeMessage =(Integer)ois.readObject();;
             Integer sizePsudoForbiden = (Integer)ois.readObject();
-            Vector<Message> messageList = new Vector<Message>();
+            LinkedList<Message> messageList = new LinkedList<Message>();
             for (int i = 0 ; i< sizeMessage; i++){
                 messageList.add((Message)ois.readObject());
             }
-            Vector<String> PsudoForbidenListe = new Vector<String>();
+            LinkedList<String> PsudoForbidenListe = new LinkedList<String>();
             for (int i = 0 ; i< sizePsudoForbiden; i++){
                 PsudoForbidenListe.add((String)ois.readObject());
             }
@@ -220,8 +220,8 @@ public class ServerSocketController {
         }
     }
         public void eraseHistorique(){
-            messages.removeAllElements();
-            PsudoForbiden.removeAllElements();
+            messages.clear();
+            PsudoForbiden.clear();
             saveHistorique();
     }
 }
