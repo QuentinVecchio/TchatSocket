@@ -8,6 +8,8 @@ import java.util.Date;
 
 public class Message implements Serializable {
 
+	
+	private static final long serialVersionUID = 1L;
 	private String expediteur;
 	private String destinataire;
 	private String date;

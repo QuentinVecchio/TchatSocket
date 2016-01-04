@@ -1,22 +1,21 @@
 package server;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-//import oracle.jdeveloper.layout.VerticalFlowLayout;
 
 public class ServerCreatView extends JFrame implements ActionListener {
-    private ServerSocketController servercont;
+    
+	private static final long serialVersionUID = 1L;
+	private ServerSocketController servercont;
     private JLabel jLabel1 = new JLabel();
     private JTextField jTextField1 = new JTextField();
     private JButton jButton1 = new JButton();

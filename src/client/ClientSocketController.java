@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.rmi.RemoteException;
 
 import protocole.Message;
 import protocole.Protocole;
@@ -101,5 +102,9 @@ public class ClientSocketController extends Thread {
 	
 	public void SetColor(Color color) {
 		c.SetColor(color);
+	}
+	
+	public void Deconnect() throws RemoteException {
+		this.view.DeconnectError();
 	}
 }

@@ -66,7 +66,6 @@ public class ClientThread extends Thread {
 			clientSocket.close();
 			this.interrupt();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
 	}
@@ -85,5 +84,9 @@ public class ClientThread extends Thread {
 	
 	public void DeleteClient(String n) {
 		socOut.println("QUIT;" + n);
+	}
+	
+	public void Shutdown() {
+		socOut.println("SHUTDOWN;");
 	}
 }

@@ -51,6 +51,8 @@ public class CommunicationThread extends Thread {
 				} else if (p.GetType() == 1) {
 					String[] parts = line.split(";");
 					controller.DeleteClient(parts[1]);
+				} else if(p.GetType() == 5) {
+					controller.Deconnect();
 				}
 			} catch (IOException e) {
 				break;

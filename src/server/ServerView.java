@@ -1,46 +1,37 @@
 package server;
 
 import java.awt.BorderLayout;
-
 import java.awt.Color;
-
-import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
-
 import java.awt.event.ActionEvent;
-
 import java.awt.event.ActionListener;
-
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
-import java.util.Vector;
-
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-
 import javax.swing.JTextField;
-
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLEditorKit;
 import protocole.Message;
 
-//import oracle.jdeveloper.layout.PaneConstraints;
-//import oracle.jdeveloper.layout.PaneLayout;
 
 public class ServerView extends JFrame implements ActionListener , WindowListener  {
     
-    ServerSocketController sc;
-
-    Vector<String> Clients = new Vector<String>();
-    Vector<String> Message = new Vector<String>();
-    private JList MessageListe;
-    private JList ClientListe;
+	private static final long serialVersionUID = 1L;
+	ServerSocketController sc;
+	private JEditorPane messagesArea = new JEditorPane();
+    private JList<String> ClientListe;
+    private DefaultListModel<String> listClients = new DefaultListModel<String>();
     
     private JTabbedPane GeneralePane = new JTabbedPane();
     
@@ -54,6 +45,7 @@ public class ServerView extends JFrame implements ActionListener , WindowListene
     private JButton SaveHistorique = new JButton();
     private JButton SupHistorique = new JButton();
     private JButton LoadHistorique = new JButton();
+    private String allMessage = "";
     
     //-------------------onglait Clients----------------//
     private JPanel ClientPane = new JPanel();
@@ -81,10 +73,8 @@ public class ServerView extends JFrame implements ActionListener , WindowListene
 
     private void jbInit() throws Exception {
         
-
-        MessageListe= new JList(Message);
-        scrollMssageList.setViewportView(MessageListe);
-        ClientListe= new JList(Clients);
+        scrollMssageList.setViewportView(messagesArea);
+        ClientListe= new JList<String>(listClients);
         scrollClientList.setViewportView(ClientListe);
         
         GeneralePane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -92,19 +82,26 @@ public class ServerView extends JFrame implements ActionListener , WindowListene
         ClientPane.setLayout(borderLayout2);
         Historique.setLayout(flowLayoutHisto);
         
-        SaveHistorique.setText("Save Historique");
-        SupHistorique.setText("Sup Historique");
-        LoadHistorique.setText("Charger Historique");
+        SaveHistorique.setText("Sauvegarder historique");
+        SupHistorique.setText("Supprimer historique");
+        LoadHistorique.setText("Charger historique");
         SaveHistorique.addActionListener(this);
         SupHistorique.addActionListener(this);
         LoadHistorique.addActionListener(this);
         
-        Historique.setBorder(BorderFactory.createTitledBorder("Gsetion de l'historique"));
+        Historique.setBorder(BorderFactory.createTitledBorder("Gestion de l'historique"));
         Historique.add(LoadHistorique);
         Historique.add(SaveHistorique);
         Historique.add(SupHistorique);  
         
-        scrollMssageList.setBorder(BorderFactory.createTitledBorder("Clientes acctuelement connecte"));
+        messagesArea.setEditable(false);
+	    HTMLEditorKit kit = new HTMLEditorKit();
+	    messagesArea.setEditorKit(kit);
+	    Document doc = kit.createDefaultDocument();
+	    messagesArea.setDocument(doc);
+	    DefaultCaret caret = (DefaultCaret)messagesArea.getCaret();
+	    caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        scrollMssageList.setBorder(BorderFactory.createTitledBorder("Historique des messages"));
         MessagePane.add(scrollMssageList, BorderLayout.CENTER);
         MessagePane.add(Historique, BorderLayout.SOUTH);
         
@@ -115,13 +112,13 @@ public class ServerView extends JFrame implements ActionListener , WindowListene
 
         
         
-        Moderater.setBorder(BorderFactory.createTitledBorder("Mod�ration"));
+        Moderater.setBorder(BorderFactory.createTitledBorder("Modération"));
         Moderater.setLayout(flowLayoutMode);
         Moderater.add(BanisheClient,BorderLayout.WEST);
         Moderater.add(SendeMessageto, BorderLayout.EAST);
         Moderater.add(MessageToSende,BorderLayout.CENTER);
         
-        scrollClientList.setBorder(BorderFactory.createTitledBorder("Clientes acctuelement connecte"));
+        scrollClientList.setBorder(BorderFactory.createTitledBorder("Clients actuellement connectés"));
         ClientPane.add(scrollClientList, BorderLayout.CENTER);
         ClientPane.add(Moderater,BorderLayout.SOUTH);
         GeneralePane.addTab("Messages", MessagePane);
@@ -132,51 +129,86 @@ public class ServerView extends JFrame implements ActionListener , WindowListene
         this.setSize(800, 500);
         this.setVisible(true);
     }
+
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == SaveHistorique ) {
-            sc.saveHistorique();
-            System.out.println("Save");
-        }else
-        if (e.getSource() == LoadHistorique ){
+        	FileDialog boiteSauver = new FileDialog(this, "Choix de l'emplacement",FileDialog.SAVE);
+        	boiteSauver.setFile(".srv");
+        	boiteSauver.setVisible(true);
+            sc.saveHistorique(boiteSauver.getDirectory() + boiteSauver.getFile());
+        } else if (e.getSource() == LoadHistorique ){
+        	FileDialog fileDialog = new FileDialog(this, "Choix du fichier", FileDialog.LOAD);
+            fileDialog.setFile(".srv");
+            fileDialog.setVisible(true);
             eraseAllMessages();
-            sc.restorHistorique();
-        }else
-        if (e.getSource() == SupHistorique ){
+            sc.restorHistorique(fileDialog.getDirectory() + fileDialog.getFile());
+        } else if (e.getSource() == SupHistorique ){
             eraseAllMessages();
             sc.eraseHistorique();
-        }else
-        if(e.getSource() == BanisheClient & !ClientListe.isSelectionEmpty()){
+        } else if(e.getSource() == BanisheClient & !ClientListe.isSelectionEmpty()){
             sc.BanishClient((String)ClientListe.getSelectedValue());
-        }else
-        if (e.getSource() == SendeMessageto & !ClientListe.isSelectionEmpty()){
+        }else if (e.getSource() == SendeMessageto & !ClientListe.isSelectionEmpty()){
             sc.Send(new Message("Moderateur",(String)ClientListe.getSelectedValue(),MessageToSende.getText(),Color.BLACK));
             System.out.print(MessageToSende.getText());
         }
-}
-    public void addMessage(String message){
-        Message.add(message);
-        MessageListe.setListData(Message);
     }
+    
+    /**
+     * ajoute et affiche un message dans la liste des messages affichée 
+     * @param m 
+     *          nouveau message à afficher
+     */
+    
+    public void AddMessage(Message m) {
+		allMessage += "<span style=\"color : rgb(" + m.GetColor().getRed() + "," + m.GetColor().getGreen() + "," + m.GetColor().getBlue() + ")\">" + m.GetExpediteur() + " > " + m.GetDestinataire() + " : " + m.GetMessage() + "</span><br>";
+		messagesArea.setCaretPosition(messagesArea.getDocument().getLength());
+		messagesArea.setText(allMessage);
+	}
+
+    /**
+     * Supprime tout les messages dans la liste des messages affichée
+     */
     public void eraseAllMessages(){
-        Message.clear();
-        MessageListe.setListData(Message);
+    	allMessage = "";
+    	messagesArea.setCaretPosition(messagesArea.getDocument().getLength());
+    	messagesArea.setText(allMessage);
     }
+    
+    /**
+     * ajoute et affiche un client dans la liste des clients affichée.
+     * @param client
+     * nouveau client à afficher
+     */
     public void addClient(String client){
-        Clients.add(client);
-        ClientListe.setListData(Clients);
+        listClients.addElement(client);
     }
+
+    /**
+     * supprime un client de la liste des clients affichée.
+     * @param client
+     *          client à supprimer 
+     */
     public void supClient(String client){
-        Clients.remove(client);
-        ClientListe.setListData(Clients);
+    	listClients.removeElement(client);
     }
-	public void windowClosing(WindowEvent e) {
-	    int anser = JOptionPane.showConfirmDialog(null,"voulez vous sovgarder l'historique?");
+
+    /**
+     * propose d'enregistrer le contenue de la conversation avant de fermer 
+     * @param e 
+     *      WindowEvent
+     */
+    public void windowClosing(WindowEvent e) {
+    	sc.DeconnectAll();
+	    int anser = JOptionPane.showConfirmDialog(null,"Voulez vous sauvegarder l'historique?");
         if (anser == JOptionPane.YES_OPTION){
-            sc.saveHistorique();
+        	FileDialog boiteSauver = new FileDialog(this, "Choix de l emplacement",FileDialog.SAVE);
+        	boiteSauver.setFile(".srv");
+        	boiteSauver.setVisible(true);
+            sc.saveHistorique(boiteSauver.getDirectory() + boiteSauver.getFile());
             System.exit(0);
             
-        }else{
-            if(anser == JOptionPane.NO_OPTION){
+        }else
+        	{ if(anser == JOptionPane.NO_OPTION){
                 System.exit(0);
             }
         }

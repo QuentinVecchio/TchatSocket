@@ -16,6 +16,8 @@ public class Protocole {
 				type = 3;
 			} else if(parts[0].equals("TRUE") && parts.length == 1){
 				type = 4;
+			} else if(parts[0].equals("SHUTDOWN") && parts.length == 1){
+				type = 5;
 			}
 		}
 	}
