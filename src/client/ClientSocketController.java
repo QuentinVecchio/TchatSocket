@@ -16,15 +16,27 @@ public class ClientSocketController extends Thread {
 	private ClientView view;
 	private CommunicationThread thread;
 	
+	/**
+	 * Constructeur de la classe ClientRMIController
+	 * 
+     */
 	public ClientSocketController() {
 		c = new Client();
 		connectionView = new ClientConnectionSocketView(this);
 	}
 	
+	/**
+	 * Méthode qui affiche la fenetre de connexion
+	 * 
+     */
 	public void Start() {
 		connectionView.Affiche();
 	}
 	
+	/**
+	 * Méthode qui gère la connexion
+	 * 
+     */
 	public void Connection() {
 		 try {
 			Socket echoSocket = new Socket(c.GetHost(),Integer.parseInt(c.GetPort()));
@@ -50,24 +62,48 @@ public class ClientSocketController extends Thread {
 		}
 	}
 
+	/**
+	 * Méthode qui gère la déconnexion
+	 * 
+     */
 	public void Disconnection() {
 		thread.Disconnection();
 		view.Exit();
 		System.exit(0);
 	}
 	
+	/**
+	 * Méthode qui gère la réception d'un message
+	 * @param m : Message recu
+	 * 
+     */
 	public void Receive(Message m) {	
 		view.AddMessage(m);
 	}
 	
+	/**
+	 * Méthode qui gère la connexion d'un nouveau client
+	 * @param client : nouveau client
+	 * 
+     */
 	public void AddClient(String client) {
 		view.AddClient(client);
 	}
 	
+	/**
+	 * Méthode qui gère la déconnexion d'un nouveau client
+	 * @param client : nouveau client
+	 * 
+     */
 	public void DeleteClient(String client) {
 		view.DeleteClient(client);
 	}
 	
+	/**
+	 * Méthode qui gère l'envoie d'un message
+	 * @param m : Message recu
+	 * 
+     */
 	public void Send(Message m) {
 		thread.Send(m);
 	}

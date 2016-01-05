@@ -3,6 +3,11 @@ package protocole;
 public class Protocole {
 	private int type = -1;
 	
+	/**
+	 * Constructeur de la classe Protocole
+	 * 
+     * @param p : string formaté pour l'envoie ou la reception
+     */
 	public Protocole(String p) {
 		if(p != null) {
 			String[] parts = p.split(";");

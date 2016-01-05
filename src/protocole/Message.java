@@ -16,6 +16,14 @@ public class Message implements Serializable {
 	private String message = "";
 	private Color color;
 	
+	/**
+	 * Constructeur de la classe Message
+	 * 
+     * @param expediteur : nom de l'expediteur
+     * @param destinataire : nom du destinataire
+     * @param message : le message
+     * @param c : la couleur du message
+     */
 	public Message(String expediteur, String destinataire, String message, Color c) {
 		this.expediteur = expediteur;
 		this.destinataire = destinataire;
@@ -24,6 +32,11 @@ public class Message implements Serializable {
 		this.color = c;
 	}
 	
+	/**
+	 * Constructeur de la classe Message a partir d'un String
+	 * 
+     * @param message : message formaté 
+     */
 	public Message(String message) {
 		String[] parts = message.split(";");
 		if(parts.length > 4) {

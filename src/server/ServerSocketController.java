@@ -21,15 +21,27 @@ public class ServerSocketController {
     private LinkedList<Message> messages = new LinkedList<Message>();
     private LinkedList<String> PseudoForbiden = new LinkedList<String>();
 		
+    /**
+	 * Méthode qui lance la fenetre de lancement du serveur
+     *
+     */
 	public void start() {
     	scv = new ServerCreatView(this);
         scv.setVisible(true);
     }
 	
+	/**
+	 * Méthode qui lance la fenetre de gestion du serveur
+     *
+     */
     public void run (){
         sv = new ServerView(this);
     }
     
+    /**
+	 * Méthode qui initialise le serveur
+     * @param port : port du serveur
+     */
     public void InitServeur(int port) {
         try {
         	serverSocket = new ServerSocket(port);
@@ -44,6 +56,11 @@ public class ServerSocketController {
         }       
     }
     
+    /**
+	 * Méthode qui enregistre un client
+     *	@param c : nom du client
+     *	@param socket : socket cliente
+     */
     public void Register(String c, ClientThread socket) {
     	String[] parts = c.split(";");
     	if(NameCanBeUse(parts[1])) {
@@ -77,6 +94,10 @@ public class ServerSocketController {
     	}
     }
     
+    /**
+	 * Méthode qui deconnecte  un client
+     *	@param name : nom du client
+     */
     public void Disconnection(String name) {
         sv.supClient(name);
     	ClientInformation client = SearchClient(name);
@@ -99,28 +120,40 @@ public class ServerSocketController {
     	}
     }
     
+    /**
+	 * Méthode qui envoie  un message
+     *	@param message : message a envoyé
+     */
     public void Send(Message message) {	
         if (NameExist(message.GetExpediteur())){
             messages.add(message);
             sv.AddMessage(message);
             for(ClientInformation c : clients) {
-                if(c.GetNom().equals(message.GetDestinataire())
-                    ||
-                    c.GetNom().equals(message.GetExpediteur())
-                    ||
-                   message.GetDestinataire().equals("all")){
-                       c.GetSocket().Send(message);   
-                   }
+                if(message.GetDestinataire().equals("all")) {
+                	c.GetSocket().Send(message);
+	           	} else {
+	           		if (message.GetDestinataire().equals(c.GetNom())  || message.GetExpediteur().equals(c.GetNom())){
+	           			c.GetSocket().Send(message);
+	           		}
+	           	}
             }
         }
     }
     
+    /**
+   	 * Méthode qui deconnecte tous clients
+     *
+     */
     public void DeconnectAll() {
     	for(ClientInformation c :clients) {
     		c.GetSocket().Shutdown();
     	}
     }
     
+    /**
+   	 * Méthode qui banni un client
+     * @param name : nom du client
+     */
     public void BanishClient(String name){
         ClientInformation toBanish = SearchClient(name);
         Send(new Message("Moderateur", toBanish.GetNom(), "Vous avez été bannie", Color.BLACK));
@@ -129,6 +162,11 @@ public class ServerSocketController {
         PseudoForbiden.add(name);
     }
 
+    /**
+   	 * Méthode qui recherche si un nom de client existe
+     * @param name : nom du client
+     * @return true si le nom existe, false sinon
+     */
     private boolean NameExist(String name) {
         for(ClientInformation c :clients) {
 	    	if(c.GetNom().equals(name)) {
@@ -142,6 +180,11 @@ public class ServerSocketController {
     	return false;
     }
     
+    /**
+   	 * Méthode qui recherche si un nom de client peut etre utilisé
+     * @param name : nom du client
+     * @return true si le nom peut etre utilisé, false sinon
+     */
     private boolean NameCanBeUse(String name) {
         for(ClientInformation c :clients) {
             if(c.GetNom().equals(name)) {
@@ -156,6 +199,11 @@ public class ServerSocketController {
         return false;
     }
     
+    /**
+   	 * Méthode qui recherche un client
+     * @param name : nom du client
+     * @return le client s'il existe, null sinon
+     */
     private ClientInformation SearchClient(String name) {
         for(ClientInformation c : clients) {
     		if(c.GetNom().equals(name)) {
@@ -167,6 +215,7 @@ public class ServerSocketController {
     
     /**
      * Sauvegarde l'historique.
+     * @param path : lien vers l'historique
      */
     public void saveHistorique(String path){
     	ObjectOutputStream oos = null;
@@ -185,6 +234,7 @@ public class ServerSocketController {
 
     /**
      * charge l'historique préalablement sauvegarder
+     * @param path : lien vers l'historique
      */
     public void restorHistorique(String path){
         ObjectInputStream ois = null;

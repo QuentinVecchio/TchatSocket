@@ -11,6 +11,10 @@ public class ServerSocketThread extends Thread {
 		this.controller = controller;
 	}
 	
+	/**
+	 * Méthode qui est appellé lors du lancement du thread
+     *
+     */
 	public void run() {
 		 while (true) {
  			Socket clientSocket;

@@ -14,6 +14,13 @@ public class CommunicationThread extends Thread {
 	private PrintStream socOut = null;
     private BufferedReader socIn = null;
     
+    /**
+	 * Constructeur de la classe CommunicationThread
+	 * @param controller : Controller du client
+	 * @param socket : Socket du client
+     * @param socOut : flux d'ecriture sur la socket
+     * @param socIn : flux de lecture sur la socket
+     */
 	public CommunicationThread(ClientSocketController controller, Socket socket, PrintStream socOut, BufferedReader socIn) {
 		this.controller = controller;
 		this.echoSocket = socket;
@@ -21,6 +28,10 @@ public class CommunicationThread extends Thread {
 		this.socIn = socIn;
 	}
 	
+	/**
+	 * Méthode qui gère la déconnexion
+	 * 
+     */
 	public void Disconnection() {
 		socOut.println("QUIT;" + controller.GetName() + ";" + controller.GetColor().getRed()+"_"+controller.GetColor().getGreen()+"_"+controller.GetColor().getBlue());
 		try {
@@ -32,10 +43,19 @@ public class CommunicationThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Méthode qui gère l'envoie d'un message
+	 * 
+	 * @param m : Message a envoyer
+     */
 	public void Send(Message m) {
 		socOut.println(m.toString());
 	}
 	
+	/**
+	 * Méthode run appelle au lancement du thread
+	 * 
+     */
 	public void run() {
 		while (true) {
         	try {
